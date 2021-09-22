@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_datetime_picker/src/bottom_sheet_app_bar.dart';
 import 'package:flutter_datetime_picker/src/button.dart';
-import 'package:flutter_datetime_picker/src/colors.dart';
 import 'package:flutter_datetime_picker/src/date_model.dart';
 import 'package:flutter_datetime_picker/src/datetime_picker_theme.dart';
 import 'package:flutter_datetime_picker/src/i18n_model.dart';
@@ -139,7 +138,7 @@ class DatePicker {
     locale: LocaleType.en,
     DateTime? currentTime,
     DatePickerTheme? theme,
-    String deleteText = '',
+    String? deleteText,
     String confirmText = '',
     String title = '',
   }) async {
@@ -209,7 +208,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     this.locale,
     RouteSettings? settings,
     BasePickerModel? pickerModel,
-    this.deleteText = '',
+    this.deleteText,
     this.confirmText = '',
     this.onDelete,
     this.title = '',
@@ -224,7 +223,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
   final LocaleType? locale;
   final DatePickerTheme theme;
   final BasePickerModel pickerModel;
-  final String deleteText;
+  final String? deleteText;
   final String confirmText;
   final Function? onDelete;
   final String title;
@@ -280,7 +279,7 @@ class _DatePickerComponent extends StatefulWidget {
     this.onChanged,
     this.locale,
     this.onDelete,
-    this.deleteText = '',
+    this.deleteText,
     this.confirmText = '',
     this.title = '',
   }) : super(key: key);
@@ -293,7 +292,7 @@ class _DatePickerComponent extends StatefulWidget {
 
   final BasePickerModel pickerModel;
 
-  final String deleteText;
+  final String? deleteText;
   final String confirmText;
   final String title;
 
@@ -383,9 +382,9 @@ class _DatePickerState extends State<_DatePickerComponent> {
                       padding: EdgeInsets.all(4),
                       alignment: Alignment.center,
                       child: Text(
-                        widget.deleteText,
+                        widget.deleteText!,
                         style: OneTypography.t14R.copyWith(
-                          color: OneColors.red500,
+                          color: Theme.of(context).errorColor,
                         ),
                       ),
                     ),
