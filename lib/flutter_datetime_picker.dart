@@ -392,7 +392,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
                   ),
           ),
           itemView,
-          _renderConfirmBtn(),
+          SafeArea(child: _renderConfirmBtn()),
         ],
       );
     }
