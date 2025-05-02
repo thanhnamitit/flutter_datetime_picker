@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// Migrate DiagnosticableMixin to Diagnosticable until
-// https://github.com/flutter/flutter/pull/51495 makes it into stable (v1.15.21)
 class DatePickerTheme with DiagnosticableTreeMixin {
   final TextStyle cancelStyle;
   final TextStyle doneStyle;
@@ -15,10 +13,10 @@ class DatePickerTheme with DiagnosticableTreeMixin {
   final double itemHeight;
 
   const DatePickerTheme({
-    this.cancelStyle = const TextStyle(color: Colors.black54, fontSize: 16),
-    this.doneStyle = const TextStyle(color: Colors.blue, fontSize: 16),
-    this.itemStyle = const TextStyle(color: Color(0xFF000046), fontSize: 18),
-    this.backgroundColor = Colors.white,
+    this.cancelStyle = const TextStyle(color: Color(0xFF666666), fontSize: 16),
+    this.doneStyle = const TextStyle(color: Color(0xFF2F6BFF), fontSize: 16),
+    this.itemStyle = const TextStyle(color: Colors.white, fontSize: 18),
+    this.backgroundColor = const Color(0xFF161A1D),
     this.headerColor,
     this.containerHeight = 210.0,
     this.titleHeight = 44.0,

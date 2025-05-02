@@ -2,13 +2,17 @@ name: flutter_datetime_picker
 description: A date time picker for flutter, you can choose date / time / date&time in English Dutch and Chinese, and you can also custom your own picker content
 version: 1.5.1
 homepage: https://github.com/Realank/flutter_datetime_picker
+publish_to: 'none'
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  core:
+    path: ../core
 
 dev_dependencies:
   flutter_test:

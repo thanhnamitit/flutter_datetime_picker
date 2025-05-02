@@ -1,11 +1,10 @@
 library flutter_datetime_picker;
 
 import 'dart:async';
-
+import 'package:core/core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DatePickerTheme;
 import 'package:flutter/painting.dart';
-import 'package:flutter_datetime_picker/src/bottom_sheet_app_bar.dart';
 import 'package:flutter_datetime_picker/src/button.dart';
 import 'package:flutter_datetime_picker/src/date_model.dart';
 import 'package:flutter_datetime_picker/src/datetime_picker_theme.dart';
@@ -35,11 +34,18 @@ class DatePicker {
     locale: LocaleType.en,
     DateTime? currentTime,
     DatePickerTheme? theme,
+    DatePickerModel? pickerModel,
+    String? title,
+    String? confirmText,
+    TextStyle? confirmTextStyle,
   }) async {
     return await Navigator.push(
       context,
       _DatePickerRoute(
         showTitleActions: showTitleActions,
+        title: title ?? '',
+        confirmText: confirmText ?? '',
+        confirmTextStyle: confirmTextStyle,
         onChanged: onChanged,
         onConfirm: onConfirm,
         onCancel: onCancel,
@@ -47,12 +53,13 @@ class DatePicker {
         theme: theme,
         barrierLabel:
             MaterialLocalizations.of(context).modalBarrierDismissLabel,
-        pickerModel: DatePickerModel(
-          currentTime: currentTime,
-          maxTime: maxTime,
-          minTime: minTime,
-          locale: locale,
-        ),
+        pickerModel: pickerModel ??
+            DatePickerModel(
+              currentTime: currentTime,
+              maxTime: maxTime,
+              minTime: minTime,
+              locale: locale,
+            ),
       ),
     );
   }
@@ -179,6 +186,9 @@ class DatePicker {
     locale: LocaleType.en,
     BasePickerModel? pickerModel,
     DatePickerTheme? theme,
+    String? title,
+    String? confirmText,
+    TextStyle? confirmTextStyle,
   }) async {
     return await Navigator.push(
       context,
@@ -189,6 +199,9 @@ class DatePicker {
         onCancel: onCancel,
         locale: locale,
         theme: theme,
+        title: title ?? '',
+        confirmText: confirmText ?? '',
+        confirmTextStyle: confirmTextStyle,
         barrierLabel:
             MaterialLocalizations.of(context).modalBarrierDismissLabel,
         pickerModel: pickerModel,
@@ -210,6 +223,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     BasePickerModel? pickerModel,
     this.deleteText,
     this.confirmText = '',
+    this.confirmTextStyle,
     this.onDelete,
     this.title = '',
   })  : this.pickerModel = pickerModel ?? DatePickerModel(),
@@ -225,6 +239,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
   final BasePickerModel pickerModel;
   final String? deleteText;
   final String confirmText;
+  final TextStyle? confirmTextStyle;
   final Function? onDelete;
   final String title;
 
@@ -326,6 +341,47 @@ class _DatePickerState extends State<_DatePickerComponent> {
   @override
   Widget build(BuildContext context) {
     DatePickerTheme theme = widget.route.theme;
+
+    // Check if the theme passed looks like the default instance.
+    // Note: This heuristic check based on default colors (white, black54, blue)
+    // might be brittle if the library's defaults change.
+    // A more robust solution might involve making widget.route.theme nullable.
+    if (theme.backgroundColor == Colors.white &&
+        theme.headerColor == null &&
+        theme.cancelStyle.color == Colors.black54 &&
+        theme.doneStyle.color == Colors.blue) {
+      // If it looks like the default theme, create one using the context's theme
+      final textTheme = Theme.of(context).textTheme;
+      final colorScheme = Theme.of(context).colorScheme;
+      final hintColor = Theme.of(context).hintColor;
+
+      theme = DatePickerTheme(
+        // Use bodyMedium style from context theme, provide fallbacks
+        cancelStyle: textTheme.bodyMedium?.copyWith(
+              color: hintColor,
+              fontSize: 16,
+            ) ??
+            const TextStyle(color: Colors.grey, fontSize: 16),
+        doneStyle: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ) ??
+            TextStyle(
+                color: colorScheme.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600),
+        itemStyle: textTheme.bodyMedium?.copyWith(fontSize: 18) ??
+            const TextStyle(fontSize: 18),
+        // Use surface and background colors from context theme
+        backgroundColor: Theme.of(context).canvasColor,
+        headerColor: colorScheme.background,
+        // Keep original layout values from the default theme
+        itemHeight: theme.itemHeight,
+        titleHeight: theme.titleHeight,
+      );
+    }
+
     return GestureDetector(
       child: AnimatedBuilder(
         animation: widget.route.animation!,
@@ -384,7 +440,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
                       child: Text(
                         widget.deleteText!,
                         style: OneTypography.t14R.copyWith(
-                          color: Theme.of(context).errorColor,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       ),
                     ),
@@ -408,6 +464,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
           widget.route.onConfirm?.call(widget.pickerModel.finalTime()!);
         },
         text: widget.confirmText,
+        textStyle: widget.route.confirmTextStyle,
       ),
     );
   }
